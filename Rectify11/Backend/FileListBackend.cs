@@ -13,21 +13,24 @@ namespace Rectify11.Backend
         private static List<string> Tmp = new List<string>();
         public static List<FileItem> FileListFull(string Dir, string sysDrive)
         {
-            DirectoryInfo directory = new DirectoryInfo(Dir);
             List<FileItem> icn = new List<FileItem>();
-            var a = directory.GetFiles("*.*", SearchOption.AllDirectories);
-            for (int i = 0; i < a.Count(); i++)
+            if (Directory.Exists(Dir))
             {
-                if (File.Exists(a[i].FullName.Replace(Dir, Variables.sysDrive).Replace(".res", "")))
+                DirectoryInfo directory = new DirectoryInfo(Dir);
+                var a = directory.GetFiles("*.*", SearchOption.AllDirectories);
+                for (int i = 0; i < a.Count(); i++)
                 {
-                    FileItem ico = new FileItem();
-                    ico.Name = a[i].Name.Replace(".res", "");
-                    ico.fileInfo = a[i];
-                    ico.path = a[i].FullName.Replace(Dir, sysDrive).Replace(".res", "");
-                    if (ico.Name.Contains(".mun")) ico.fileType = FileItem.FileType.basic;
-                    else ico.fileType = FileItem.FileType.advanced;
-                    icn.Add(ico);
-                } 
+                    if (File.Exists(a[i].FullName.Replace(Dir, Variables.sysDrive).Replace(".res", "")))
+                    {
+                        FileItem ico = new FileItem();
+                        ico.Name = a[i].Name.Replace(".res", "");
+                        ico.fileInfo = a[i];
+                        ico.path = a[i].FullName.Replace(Dir, sysDrive).Replace(".res", "");
+                        if (ico.Name.Contains(".mun")) ico.fileType = FileItem.FileType.basic;
+                        else ico.fileType = FileItem.FileType.advanced;
+                        icn.Add(ico);
+                    }
+                }
             }
             return icn;
         }

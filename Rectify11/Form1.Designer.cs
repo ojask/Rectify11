@@ -132,12 +132,12 @@ namespace Rectify11
             // 
             // treeView1
             // 
-            this.treeView1.BorderStyle = System.Windows.Forms.BorderStyle.None;
+            this.treeView1.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
             this.treeView1.CheckBoxes = true;
             this.treeView1.Dock = System.Windows.Forms.DockStyle.Right;
-            this.treeView1.Indent = 23;
-            this.treeView1.ItemHeight = 22;
-            this.treeView1.Location = new System.Drawing.Point(209, 0);
+            this.treeView1.Indent = 19;
+            this.treeView1.ItemHeight = 18;
+            this.treeView1.Location = new System.Drawing.Point(181, 0);
             this.treeView1.Name = "treeView1";
             treeNode1.Checked = true;
             treeNode1.Name = "Node3";
@@ -158,7 +158,7 @@ namespace Rectify11
             treeNode3,
             treeNode4,
             treeNode5});
-            this.treeView1.Size = new System.Drawing.Size(360, 283);
+            this.treeView1.Size = new System.Drawing.Size(388, 283);
             this.treeView1.TabIndex = 1;
             // 
             // selImg

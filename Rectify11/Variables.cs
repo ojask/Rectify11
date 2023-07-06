@@ -19,5 +19,14 @@ namespace Rectify11
         public static string trash = Path.Combine(windir, "Rectify11", "Trash");
         public static string UserDir = Environment.GetEnvironmentVariable("userprofile");
         public static string Extras = Path.Combine(r11Fldr, "Extras");
+        public static List<string> R11FldrList()
+        {
+            List<string> lst = new List<string>();
+            lst.Add(r11Files);
+            lst.Add(Backup);
+            lst.Add(tmp);
+            lst.Add(trash);
+            return lst;
+        } 
     }
 }

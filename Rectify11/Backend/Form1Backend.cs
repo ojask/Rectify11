@@ -36,18 +36,18 @@ namespace Rectify11.Backend
             if (r == DialogResult.Yes) a = true;
             return a;
         }
-        public static void PrepareTree(TreeView treeView1)
+        public static void PrepareTree(TreeView treeView1, List<FileItem> files, List<Extra> Extras)
         {
             TreeStructure.PrepareTreeNodes(treeView1);
 
-            var a = FileListBackend.FileListFull(Variables.r11Files, Variables.sysDrive);
+            var a = files;
             for (int i=0; i<a.Count; i++)
             {
                 if (a[i].fileType==FileItem.FileType.advanced) treeView1.Nodes[0].Nodes[0].Nodes.Add(a[i].Name);
                 else treeView1.Nodes[0].Nodes[1].Nodes.Add(a[i].Name);
             }
 
-            var b = ExtrasBackend.ExtrasList(Variables.Extras);
+            var b = Extras;
             for(int i=0; i<b.Count; i++)
             {
                 treeView1.Nodes[1].Nodes.Add(b[i].Name);

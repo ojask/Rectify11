@@ -14,7 +14,7 @@ namespace Rectify11.Backend
 {
     class InstallSequence
     {
-        public void StartPatching(Form frm, List<string> FileListSelected, List<FileItem> FileListFull, List<Extra> ExtrasList)
+        public static void StartPatching(Form frm, List<string> FileListSelected, List<FileItem> FileListFull, List<Extra> ExtrasList)
         {
             Form1Backend.ShowProgressDialog("Preparing Files...", "Installer is about to begin patching...", "", frm, frm.Icon);
             Thread.Sleep(2000);
@@ -33,8 +33,8 @@ namespace Rectify11.Backend
                     }
                     catch { }
 
-                    Form1Backend.mainBackend.SetPerms(Path.GetDirectoryName(a[i].path), "administrators");
-                    Form1Backend.mainBackend.SetPerms(a[i].path, "administrators");
+                    Form1Backend.mainBackend.SetPerms(Path.GetDirectoryName(a[i].path), "administrators", false);
+                    Form1Backend.mainBackend.SetPerms(a[i].path, "administrators", true);
 
                     try
                     {
@@ -50,8 +50,8 @@ namespace Rectify11.Backend
                     }
                     catch { }
 
-                    Form1Backend.mainBackend.ResetPerms(a[i].path);
-                    Form1Backend.mainBackend.ResetPerms(Path.GetDirectoryName(a[i].path));
+                    Form1Backend.mainBackend.SetPerms(a[i].path, @"NT SERVICE\TrustedInstaller", false);
+                    Form1Backend.mainBackend.SetPerms(Path.GetDirectoryName(a[i].path), @"NT SERVICE\TrustedInstaller", false);
                 }
             }
             for (int i = 0; i < ExtrasList.Count; i++)
@@ -60,7 +60,7 @@ namespace Rectify11.Backend
                 {
                     Form1Backend.ChangeDialogText("Installing Extras...", "Please wait while the installer is installing extras.",
                     "Installing Extras: " + ExtrasList[i].Name, ExtrasList[i].ExtraIcon);
-                    ExtrasList[i].InstallExtra();
+                    try { ExtrasList[i].InstallExtra(); } catch { }
                     Thread.Sleep(4000);
                 }
             }
@@ -68,16 +68,22 @@ namespace Rectify11.Backend
             PerformCleanup();
             Form1Backend.CloseProgressDialog(frm);
         }
-        private void PerformCleanup()
+        private static void PerformCleanup()
         {
             DirectoryInfo directory = new DirectoryInfo(Path.Combine(Variables.UserDir, "appdata", "local", "microsoft", "windows", "explorer"));
             var a = directory.GetFiles("*.db", SearchOption.AllDirectories);
             for (int i = 0; i < a.Length; i++)
             {
-                Form1Backend.mainBackend.SetPerms(a[i].FullName, "administrators");
-                Form1Backend.mainBackend.SetPerms(a[i].DirectoryName, "administrators");
+                Form1Backend.mainBackend.SetPerms(a[i].FullName, "administrators", true);
+                Form1Backend.mainBackend.SetPerms(a[i].DirectoryName, "administrators", true);
                 try { NativeMethods.MoveFileEx(a[i].FullName, Path.Combine(Variables.trash, a[i].Name), NativeMethods.MoveFileFlags.MOVEFILE_REPLACE_EXISTING); }
                 catch { }
+            }
+
+            var b = new DirectoryInfo(Variables.r11Fldr).GetFiles("*.bin", SearchOption.TopDirectoryOnly);
+            for (int i=0; i<b.Length; i++)
+            {
+                File.Delete(b[i].FullName);
             }
         }
     }

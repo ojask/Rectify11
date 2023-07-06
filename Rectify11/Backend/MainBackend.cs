@@ -9,6 +9,10 @@ using System.Windows.Forms;
 using KPreisser.UI;
 using Microsoft.VisualBasic;
 using System.Diagnostics;
+using System.Collections;
+using Rectify11.Properties;
+using System.Globalization;
+using System.Reflection;
 
 namespace Rectify11.Backend
 {
@@ -21,23 +25,26 @@ namespace Rectify11.Backend
                     + " /CommandLine " + "\'" + args + "\'"
                     + " /WaitProcess 1 /RunAs 8 /Run", appWinStyle, wait);
         }
-        public void SetPerms(string file, string GroupOrUser)
+        public void SetPerms(string file, string GroupOrUser, bool set)
         {
-            Interaction.Shell(Path.Combine(Variables.sys32, "takeown.exe") +
-                " /a /f " + file, AppWinStyle.Hide, true);
+            if (set)
+            {
+                Interaction.Shell(Path.Combine(Variables.sys32, "takeown.exe") +
+                    " /a /f " + file, AppWinStyle.Hide, true);
 
-            Interaction.Shell(Path.Combine(Variables.sys32, "icacls.exe") +
-                " " + file + " /grant " + GroupOrUser +
-                ":F", AppWinStyle.Hide, true);
-        }
-        public void ResetPerms(string file)
-        {
-            Interaction.Shell(Path.Combine(Variables.sys32, "icacls.exe") +
-                " " + file + " /grant " + '"' + @"NT SERVICE\TrustedInstaller" + '"' +
-                ":F", AppWinStyle.Hide, true);
+                Interaction.Shell(Path.Combine(Variables.sys32, "icacls.exe") +
+                    " " + file + " /grant " + '"' + GroupOrUser + '"' +
+                    ":F", AppWinStyle.Hide, true);
+            }
+            else
+            {
+                Interaction.Shell(Path.Combine(Variables.sys32, "icacls.exe") +
+                    " " + file + " /grant " + '"' + GroupOrUser + '"' +
+                    ":F", AppWinStyle.Hide, true);
 
-            Interaction.Shell(Path.Combine(Variables.sys32, "icacls.exe") +
-                " " + file + " /setowner " + '"' + @"NT SERVICE\TrustedInstaller" + '"', AppWinStyle.Hide, true);
+                Interaction.Shell(Path.Combine(Variables.sys32, "icacls.exe") +
+                    " " + file + " /setowner " + '"' + GroupOrUser + '"', AppWinStyle.Hide, true);
+            }
         }
         public void Patch(string path, string resDir, string tmpDir, string Backup, string trash, string sysdrive)
         {
@@ -56,17 +63,17 @@ namespace Rectify11.Backend
             if (!File.Exists(path.Replace(sysdrive, Backup)))
                 File.Copy(path, path.Replace(sysdrive, Backup), true);
 
-            Interaction.Shell(Path.Combine(Variables.r11Fldr, "rh.exe") +
+            Interaction.Shell(Path.Combine(Variables.r11Fldr, "ResourceHacker.bin") +
                 " -open " + path.Replace(sysdrive, resDir) + ".res" +
                 " -save " + path.Replace(sysdrive, resDir) + ".res" +
                 " -action changelanguage(0)", AppWinStyle.Hide, true);
 
-            Interaction.Shell(Path.Combine(Variables.r11Fldr, "rh.exe") +
+            Interaction.Shell(Path.Combine(Variables.r11Fldr, "ResourceHacker.bin") +
                 " -open " + path.Replace(sysdrive, tmpDir) +
                 " -save " + path.Replace(sysdrive, tmpDir) +
                 " -action changelanguage(0)", AppWinStyle.Hide, true);
 
-            Interaction.Shell(Path.Combine(Variables.r11Fldr, "rh.exe") +
+            Interaction.Shell(Path.Combine(Variables.r11Fldr, "ResourceHacker.bin") +
                 " -open " + path.Replace(sysdrive, tmpDir) +
                 " -save " + path.Replace(sysdrive, tmpDir) +
                 " -action addoverwrite" +
@@ -76,43 +83,63 @@ namespace Rectify11.Backend
         {
             if (!Directory.Exists(Variables.r11Fldr)) Directory.CreateDirectory(Variables.r11Fldr);
 
-            if (Directory.Exists(Variables.r11Files)) Directory.Delete(Variables.r11Files, true);
-            if (!Directory.Exists(Variables.r11Files)) Directory.CreateDirectory(Variables.r11Files);
+            var a = new DirectoryInfo(Variables.r11Fldr).GetFiles("*.*", SearchOption.TopDirectoryOnly);
+            var b = new DirectoryInfo(Variables.r11Fldr).GetDirectories();
 
-            if (Directory.Exists(Variables.tmp)) Directory.Delete(Variables.tmp, true);
-            if (!Directory.Exists(Variables.tmp)) Directory.CreateDirectory(Variables.tmp);
+            for(int i=0; i<a.Length; i++)
+            {
+                if(!a[i].FullName.Contains(Variables.Backup)) File.Delete(a[i].FullName);
+            }
 
-            if (Directory.Exists(Variables.trash)) Directory.Delete(Variables.trash, true);
-            if (!Directory.Exists(Variables.trash)) Directory.CreateDirectory(Variables.trash);
+            for(int i=0; i<b.Length; i++)
+            {
+                if(!b[i].FullName.Contains(Variables.Backup)) Directory.Delete(b[i].FullName, true);
+            }
 
-            if (!Directory.Exists(Variables.Backup)) Directory.CreateDirectory(Variables.Backup);
+            var rList = Resources.ResourceManager
+                       .GetResourceSet(CultureInfo.CurrentCulture, true, true)
+                       .Cast<DictionaryEntry>()
+                       .Where(x => x.Value.GetType() == typeof(byte[]))
+                       .Select(x => new { Name = x.Key.ToString(), Val = x.Value })
+                       .ToList();
 
-            if (!File.Exists(Path.Combine(Variables.r11Fldr, "7za.exe")))
-                File.WriteAllBytes(Path.Combine(Variables.r11Fldr, "7za.exe"), Properties.Resources._7za);
+            for (int i=0; i<rList.Count; i++)
+            {
+                File.WriteAllBytes(Path.Combine(Variables.r11Fldr, rList[i].Name.Replace("_","")+".bin"), (byte[])rList[i].Val);
+            }
 
-            if (!File.Exists(Path.Combine(Variables.r11Fldr, "RH.exe")))
-                File.WriteAllBytes(Path.Combine(Variables.r11Fldr, "RH.exe"), Properties.Resources.ResourceHacker);
+            for (int i = 0; i < Variables.R11FldrList().Count; i++)
+            {
+                if (!Directory.Exists(Variables.R11FldrList()[i]))
+                {
+                    Directory.CreateDirectory(Variables.R11FldrList()[i]);
+                }
+            }
 
-            if (!File.Exists(Path.Combine(Variables.r11Fldr, "aRun.exe")))
-                File.WriteAllBytes(Path.Combine(Variables.r11Fldr, "aRun.exe"), Properties.Resources.AdvancedRun);
-
-            if (!File.Exists(Path.Combine(Variables.r11Fldr, "files.7z")))
-                File.WriteAllBytes(Path.Combine(Variables.r11Fldr, "files.7z"), Properties.Resources.Files);
-
-            if (!File.Exists(Path.Combine(Variables.r11Fldr, "extras.7z")))
-                File.WriteAllBytes(Path.Combine(Variables.r11Fldr, "extras.7z"), Properties.Resources.Extras);
-
-            Interaction.Shell(Path.Combine(Variables.r11Fldr, "7za.exe") +
-                        " x -o" + Path.Combine(Variables.r11Fldr) +
-                        " " + Path.Combine(Variables.r11Fldr, "Files.7z"), AppWinStyle.Hide, true);
-
-            Interaction.Shell(Path.Combine(Variables.r11Fldr, "7za.exe") +
+        }
+        public void ExtractFiles()
+        {
+            Interaction.Shell(Path.Combine(Variables.r11Fldr, "7za.bin") +
             " x -o" + Path.Combine(Variables.r11Fldr) +
-            " " + Path.Combine(Variables.r11Fldr, "Extras.7z"), AppWinStyle.Hide, true);
+            " " + Path.Combine(Variables.r11Fldr, "Files.bin"), AppWinStyle.Hide, true);
 
-            File.Delete(Path.Combine(Variables.r11Fldr, "files.7z"));
-            File.Delete(Path.Combine(Variables.r11Fldr, "extras.7z"));
+            Interaction.Shell(Path.Combine(Variables.r11Fldr, "7za.bin") +
+            " x -o" + Path.Combine(Variables.r11Fldr) +
+            " " + Path.Combine(Variables.r11Fldr, "Extras.bin"), AppWinStyle.Hide, true);
 
+            File.Delete(Path.Combine(Variables.r11Fldr, "files.bin"));
+            File.Delete(Path.Combine(Variables.r11Fldr, "extras.bin"));
+        }
+        public void KillExtrasIfRunning()
+        {
+            if (Directory.Exists(Variables.Extras))
+            {
+                var a = new DirectoryInfo(Variables.Extras).GetFiles("*.*", SearchOption.AllDirectories);
+                if (a.Length > 0) for (int i = 0; i < a.Length; i++)
+                    {
+                        Interaction.Shell(Path.Combine(Variables.sys32, "taskkill.exe") + " /f /im " + '"' + a[i].Name + '"', AppWinStyle.Hide, true);
+                    }
+            }
         }
     }
 }

@@ -15,35 +15,37 @@ namespace Rectify11.Backend
         public static List<Extra> ExtrasList(string extrasDir)
         {
             List<Extra> ls = new List<Extra>();
-
+            if (Directory.Exists(extrasDir)) { 
             var a = new DirectoryInfo(extrasDir).GetDirectories();
-            for(int i=0; i < a.Length; i++)
-            {
-                Extra extra = new Extra();
-                var parser = new FileIniDataParser();
-                IniData data = parser.ReadFile(Path.Combine(a[i].FullName, "config.ini"));
-
-                extra.Name = data["ConfigFile"]["FriendlyName"];
-                extra.ExtraIcon = Icon.ExtractAssociatedIcon(Path.Combine(a[i].FullName, data["ConfigFile"]["Icon"]));
-                extra.installType = data["ConfigFile"]["InstallType"];
-                extra.dirName = a[i].FullName;
-                extra.dirNameHalf = a[i].Name;
-                try { extra.ExeName = data["ConfigFile"]["exeName"]; } catch { }
-                try { extra.args = data["ConfigFile"]["args"]; } catch { }
-                try { extra.fileForSched = Path.Combine(a[i].FullName, data["ConfigFile"]["fileForSched"]); } catch { }
-                try { extra.DestDir = data["ConfigFile"]["destDir"]; } catch { }
-                try { extra.copyNumber = data["ConfigFile"]["copyNumber"]; } catch { }
-                try
+                for (int i = 0; i < a.Length; i++)
                 {
-                    for (int j = 0; j < Int32.Parse(extra.copyNumber); j++)
-                    {
-                        extra.copyLst.Add(data["ConfigFile"]["file" + i.ToString()]);
-                    }
-                }
-                catch { }
-                ls.Add(extra);
-            }
+                    Extra extra = new Extra();
+                    var parser = new FileIniDataParser();
+                    IniData data = parser.ReadFile(Path.Combine(a[i].FullName, "config.ini"));
 
+                    extra.Name = data["ConfigFile"]["FriendlyName"];
+                    extra.ExtraIcon = Icon.ExtractAssociatedIcon(Path.Combine(a[i].FullName, data["ConfigFile"]["Icon"]));
+                    extra.installType = data["ConfigFile"]["InstallType"];
+                    extra.dirName = a[i].FullName;
+                    extra.dirNameHalf = a[i].Name;
+                    try { extra.ExeName = data["ConfigFile"]["exeName"]; } catch { }
+                    try { extra.args = data["ConfigFile"]["args"]; } catch { }
+                    try { extra.fileForSched = Path.Combine(a[i].FullName, data["ConfigFile"]["fileForSched"]); } catch { }
+                    try { extra.DestDir = data["ConfigFile"]["destDir"]; } catch { }
+                    try { extra.copyNumber = data["ConfigFile"]["copyNumber"]; } catch { }
+                    try { extra.Uninstargs = data["ConfigFile"]["Uninstargs"]; } catch { }
+                    try { extra.UninstExe = data["ConfigFile"]["UninstExe"]; } catch { }
+                    try
+                    {
+                        for (int j = 0; j < Int32.Parse(extra.copyNumber); j++)
+                        {
+                            extra.copyLst.Add(data["ConfigFile"]["file" + i.ToString()]);
+                        }
+                    }
+                    catch { }
+                    ls.Add(extra);
+                }
+            }
             return ls;
         }
 
@@ -54,6 +56,8 @@ namespace Rectify11.Backend
         public string dirName { get; set; }
         public string dirNameHalf { get; set; }
         public string args { get; set; }
+        public string Uninstargs { get; set; }
+        public string UninstExe { get; set; }
         public string installType { get; set; }
         public string ExeName { get; set; }
         public string fileForSched { get; set; }
@@ -67,14 +71,14 @@ namespace Rectify11.Backend
             {
                 case "tasksched":
                     Interaction.Shell(Path.Combine(Variables.sys32, "schtasks.exe") + 
-                        " /create /tn " + dirNameHalf + " /xml " + Path.Combine(dirName, fileForSched), AppWinStyle.Hide, true);
+                        " /create /f /tn " + dirNameHalf + " /xml " + Path.Combine(dirName, fileForSched), AppWinStyle.Hide, true);
                     break;
                 case "runexewithargs":
-                    Interaction.Shell(ExeName.Replace("%systemdrive%", Variables.sysDrive).Replace("Path(this)", dirName).Replace("%userprofile%", Variables.UserDir) + 
-                        " " + args.Replace("Path(this)", dirName).Replace("%systemdrive%", Variables.sysDrive).Replace("%userprofile%", Variables.UserDir), AppWinStyle.Hide, true);
+                    Interaction.Shell(ParsedPath(ExeName) + 
+                        " " + ParsedPath(args), AppWinStyle.Hide, true);
                     break;
                 case "copyall":
-                    var b = DestDir.Replace("%systemdrive%", Variables.sysDrive).Replace("%userprofile%", Variables.UserDir).Replace("Path(this)", dirName);
+                    var b = ParsedPath(DestDir);
                     if (!Directory.Exists(b)) Directory.CreateDirectory(b);
                     var a = new DirectoryInfo(dirName).GetFiles("*.*", SearchOption.AllDirectories);
                     for(int i=0; i < a.Length; i++)
@@ -83,7 +87,7 @@ namespace Rectify11.Backend
                     }
                     break;
                 case "copyspecific":
-                    var dest = DestDir.Replace("%systemdrive%", Variables.sysDrive).Replace("Path(this)", dirName).Replace("%userprofile%", Variables.UserDir);
+                    var dest = ParsedPath(DestDir);
                     var e = copyLst;
                     for(int i=1; i<=e.Count; i++)
                     {
@@ -91,6 +95,40 @@ namespace Rectify11.Backend
                     }
                     break;
             }
+        }
+        public void UninstallExtra()
+        {
+            switch (installType.ToLower())
+            {
+                case "tasksched":
+                    Interaction.Shell(Path.Combine(Variables.sys32, "schtasks.exe") + " /delete /f /tn "+dirNameHalf, AppWinStyle.Hide);
+                    break;
+                case "runexewithargs":
+                    Interaction.Shell(ParsedPath(UninstExe) +
+                        " " + ParsedPath(Uninstargs), AppWinStyle.Hide, true);
+                    break;
+                case "copyall":
+                    var b = ParsedPath(DestDir);
+                    if (!Directory.Exists(b)) Directory.CreateDirectory(b);
+                    var a = new DirectoryInfo(dirName).GetFiles("*.*", SearchOption.AllDirectories);
+                    for (int i = 0; i < a.Length; i++)
+                    {
+                        if(File.Exists(Path.Combine(b, a[i].Name))) File.Delete(Path.Combine(b, a[i].Name));
+                    }
+                    break;
+                case "copyspecific":
+                    var dest = ParsedPath(DestDir);
+                    var e = copyLst;
+                    for (int i = 1; i <= e.Count; i++)
+                    {
+                        if(File.Exists(Path.Combine(dest, e[i]))) File.Delete(Path.Combine(dest, e[i]));
+                    }
+                    break;
+            }
+        }
+        private string ParsedPath(string s)
+        {
+            return s.Replace("%systemdrive%", Variables.sysDrive).Replace("Path(this)", dirName).Replace("%userprofile%", Variables.UserDir);
         }
     }
 }
