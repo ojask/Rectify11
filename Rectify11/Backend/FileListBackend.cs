@@ -39,7 +39,7 @@ namespace Rectify11.Backend
             foreach (TreeNode node in nodes)
             {
                 if (node.Checked)
-                { Tmp.Add(node.Text); }
+                { Tmp.Add(node.Name); }
                 lookupChk(node.Nodes);
             }
         }

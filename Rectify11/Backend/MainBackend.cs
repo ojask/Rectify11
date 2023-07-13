@@ -20,7 +20,7 @@ namespace Rectify11.Backend
     {
         public void RunAsTrustedInstaller(string FileName, string args, bool wait, AppWinStyle appWinStyle)
         {
-            Interaction.Shell(Path.Combine(Variables.r11Fldr, "aRun.exe")
+            Interaction.Shell(Path.Combine(Variables.r11Fldr, "aRun.bin")
                     + " /EXEFilename " + '"' + FileName + '"'
                     + " /CommandLine " + "\'" + args + "\'"
                     + " /WaitProcess 1 /RunAs 8 /Run", appWinStyle, wait);
@@ -46,34 +46,19 @@ namespace Rectify11.Backend
                     " " + file + " /setowner " + '"' + GroupOrUser + '"', AppWinStyle.Hide, true);
             }
         }
-        public void Patch(string path, string resDir, string tmpDir, string Backup, string trash, string sysdrive)
+        public void Patch(string path, string resDir, string tmpDir, string sysdrive)
         {
-            if (!Directory.Exists(Path.GetDirectoryName(path).Replace(sysdrive, Backup)))
-                Directory.CreateDirectory(Path.GetDirectoryName(path).Replace(sysdrive, Backup));
-
-            if (!Directory.Exists(Path.GetDirectoryName(path).Replace(sysdrive, trash)))
-                Directory.CreateDirectory(Path.GetDirectoryName(path).Replace(sysdrive, trash));
-
-            if (!Directory.Exists(Path.GetDirectoryName(path).Replace(sysdrive, tmpDir)))
-                Directory.CreateDirectory(Path.GetDirectoryName(path).Replace(sysdrive, tmpDir));
-
-            if (!File.Exists(path.Replace(sysdrive, tmpDir)))
-                File.Copy(path, path.Replace(sysdrive, tmpDir), true);
-
-            if (!File.Exists(path.Replace(sysdrive, Backup)))
-                File.Copy(path, path.Replace(sysdrive, Backup), true);
-
-            Interaction.Shell(Path.Combine(Variables.r11Fldr, "ResourceHacker.bin") +
+            Interaction.Shell(Path.Combine(Variables.r11Fldr, "ResourceHacker.exe") +
                 " -open " + path.Replace(sysdrive, resDir) + ".res" +
                 " -save " + path.Replace(sysdrive, resDir) + ".res" +
                 " -action changelanguage(0)", AppWinStyle.Hide, true);
 
-            Interaction.Shell(Path.Combine(Variables.r11Fldr, "ResourceHacker.bin") +
+            Interaction.Shell(Path.Combine(Variables.r11Fldr, "ResourceHacker.exe") +
                 " -open " + path.Replace(sysdrive, tmpDir) +
                 " -save " + path.Replace(sysdrive, tmpDir) +
                 " -action changelanguage(0)", AppWinStyle.Hide, true);
 
-            Interaction.Shell(Path.Combine(Variables.r11Fldr, "ResourceHacker.bin") +
+            Interaction.Shell(Path.Combine(Variables.r11Fldr, "ResourceHacker.exe") +
                 " -open " + path.Replace(sysdrive, tmpDir) +
                 " -save " + path.Replace(sysdrive, tmpDir) +
                 " -action addoverwrite" +
@@ -105,7 +90,7 @@ namespace Rectify11.Backend
 
             for (int i=0; i<rList.Count; i++)
             {
-                File.WriteAllBytes(Path.Combine(Variables.r11Fldr, rList[i].Name.Replace("_","")+".bin"), (byte[])rList[i].Val);
+                File.WriteAllBytes(Path.Combine(Variables.r11Fldr, rList[i].Name.Replace("_","")+".exe"), (byte[])rList[i].Val);
             }
 
             for (int i = 0; i < Variables.R11FldrList().Count; i++)
@@ -119,16 +104,15 @@ namespace Rectify11.Backend
         }
         public void ExtractFiles()
         {
-            Interaction.Shell(Path.Combine(Variables.r11Fldr, "7za.bin") +
-            " x -o" + Path.Combine(Variables.r11Fldr) +
-            " " + Path.Combine(Variables.r11Fldr, "Files.bin"), AppWinStyle.Hide, true);
 
-            Interaction.Shell(Path.Combine(Variables.r11Fldr, "7za.bin") +
+            Interaction.Shell(Path.Combine(Variables.r11Fldr, "7za.exe") +
             " x -o" + Path.Combine(Variables.r11Fldr) +
-            " " + Path.Combine(Variables.r11Fldr, "Extras.bin"), AppWinStyle.Hide, true);
+            " " + Path.Combine(Variables.r11Fldr, "Files.exe"), AppWinStyle.Hide, true);
 
-            File.Delete(Path.Combine(Variables.r11Fldr, "files.bin"));
-            File.Delete(Path.Combine(Variables.r11Fldr, "extras.bin"));
+            Interaction.Shell(Path.Combine(Variables.r11Fldr, "7za.exe") +
+            " x -o" + Path.Combine(Variables.r11Fldr) +
+            " " + Path.Combine(Variables.r11Fldr, "Extras.exe"), AppWinStyle.Hide, true);
+
         }
         public void KillExtrasIfRunning()
         {
@@ -139,6 +123,7 @@ namespace Rectify11.Backend
                     {
                         Interaction.Shell(Path.Combine(Variables.sys32, "taskkill.exe") + " /f /im " + '"' + a[i].Name + '"', AppWinStyle.Hide, true);
                     }
+                Directory.Delete(Variables.Extras, true);
             }
         }
     }

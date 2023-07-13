@@ -59,22 +59,22 @@ namespace Rectify11
         }
         private void Form1_Shown(object sender, EventArgs e)
         {
-            Form1Backend.ShowProgressDialog("Please wait", "Extracting Files...", "Installer is extracting files for installation.", this, Icon);
-            Form1Backend.mainBackend.KillExtrasIfRunning();
-            Form1Backend.mainBackend.initProcedure();
-            Form1Backend.mainBackend.ExtractFiles();
+            UIBackend.ShowProgressDialog("Please wait", "Extracting Files...", "Installer is extracting files for installation.", this, Icon);
+            UIBackend.mainBackend.KillExtrasIfRunning();
+            UIBackend.mainBackend.initProcedure();
+            UIBackend.mainBackend.ExtractFiles();
 
             Thread.Sleep(2000);
-            Form1Backend.ChangeDialogText("Please wait", "Preparing Files...", "Installer is reading the system files for preparation.", Icon);
-            Form1Backend.PrepareTree(treeView1, FileListBackend.FileListFull(Variables.r11Files, Variables.sysDrive), ExtrasBackend.ExtrasList(Variables.Extras));
+            UIBackend.ChangeDialogText("Please wait", "Preparing Files...", "Installer is reading the system files for preparation.", Icon);
+            UIBackend.PrepareTree(treeView1, FileListBackend.FileListFull(Variables.r11Files, Variables.sysDrive), ExtrasBackend.ExtrasList(Variables.Extras));
 
             Thread.Sleep(2000);
-            Form1Backend.CloseProgressDialog(this);
+            UIBackend.CloseProgressDialog(this);
         }
         private void FrmClosing(object sender, FormClosingEventArgs e)
         {
             e.Cancel = true;
-            if (Form1Backend.ShowCancelConf()) { e.Cancel = false; }
+            if (UIBackend.ShowCancelConf()) { e.Cancel = false; }
         }
         private void AfterChk(object sender, TreeViewEventArgs e)
         {

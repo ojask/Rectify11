@@ -84,7 +84,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Backend\ExtrasBackend.cs" />
-    <Compile Include="Backend\Form1Backend.cs" />
+    <Compile Include="Backend\UIBackend.cs" />
     <Compile Include="Backend\FileListBackend.cs" />
     <Compile Include="Backend\InstallSequence.cs" />
     <Compile Include="Backend\MainBackend.cs" />

@@ -12,7 +12,7 @@ using Microsoft.VisualBasic;
 
 namespace Rectify11.Backend
 {
-    class Form1Backend
+    class UIBackend
     {
         private static TaskDialog td = new TaskDialog();
         public static MainBackend mainBackend = new MainBackend();
@@ -43,14 +43,23 @@ namespace Rectify11.Backend
             var a = files;
             for (int i=0; i<a.Count; i++)
             {
-                if (a[i].fileType==FileItem.FileType.advanced) treeView1.Nodes[0].Nodes[0].Nodes.Add(a[i].Name);
-                else treeView1.Nodes[0].Nodes[1].Nodes.Add(a[i].Name);
+                if (a[i].fileType == FileItem.FileType.advanced)
+                {
+                    TreeNode n = treeView1.Nodes[0].Nodes[0].Nodes.Add(a[i].Name);
+                    n.Name = a[i].path;
+                }
+                else 
+                { 
+                    TreeNode n = treeView1.Nodes[0].Nodes[1].Nodes.Add(a[i].Name);
+                    n.Name = a[i].path;
+                }
             }
 
             var b = Extras;
             for(int i=0; i<b.Count; i++)
             {
-                treeView1.Nodes[1].Nodes.Add(b[i].Name);
+                TreeNode n = treeView1.Nodes[1].Nodes.Add(b[i].Name);
+                n.Name = b[i].Name;
             }
         }
         public static void ShowProgressDialog(string title, string instruction, string text, Form frm1, Icon icon)

@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using System.Windows.Forms;
 using System.Threading;
 using System.IO;
+using Microsoft.Win32;
 
 namespace Rectify11.Backend
 {
@@ -13,24 +14,26 @@ namespace Rectify11.Backend
     {
         public static void StartUninstalling(Form frm, List<string> FileListSelected, List<FileItem> FileListFull, List<Extra> ExtrasList)
         {
-            Form1Backend.ShowProgressDialog("Preparing Files...", "Installer is about to begin uninstallation...", "", frm, frm.Icon);
+            UIBackend.ShowProgressDialog("Preparing Files...", "Installer is about to begin uninstallation...", "", frm, frm.Icon);
             Thread.Sleep(2000);
             var a = FileListFull;
+
+            if (Directory.Exists(Variables.trash)) Directory.Delete(Variables.trash, true);
+            Directory.CreateDirectory(Variables.trash);
+
             for (int i = 0; i < a.Count; i++)
             {
-                if (FileListSelected.Contains(a[i].Name))
+                if (FileListSelected.Contains(a[i].path))
                 {
-                    Form1Backend.ChangeDialogText("Patching Files...", "Please wait while the installer is restoring files.",
+                    UIBackend.ChangeDialogText("Restoring Files...", "Please wait while the installer is restoring files.",
                     a[i].Name + " (" + ((i * 100) / a.Count).ToString() + "% complete)",
                     Properties.Resources.InstallingIcons);
-
-                    if (Directory.Exists(Variables.trash)) Directory.CreateDirectory(Variables.trash);
 
                     if (!Directory.Exists(Path.GetDirectoryName(a[i].path).Replace(Variables.sysDrive, Variables.trash)))
                         Directory.CreateDirectory(Path.GetDirectoryName(a[i].path).Replace(Variables.sysDrive, Variables.trash));
 
-                    Form1Backend.mainBackend.SetPerms(Path.GetDirectoryName(a[i].path), "administrators", false);
-                    Form1Backend.mainBackend.SetPerms(a[i].path, "administrators", true);
+                    UIBackend.mainBackend.SetPerms(Path.GetDirectoryName(a[i].path), "administrators", true);
+                    UIBackend.mainBackend.SetPerms(a[i].path, "administrators", true);
 
                     try
                     {
@@ -46,23 +49,43 @@ namespace Rectify11.Backend
                     }
                     catch { }
 
-                    Form1Backend.mainBackend.SetPerms(a[i].path, @"NT SERVICE\TrustedInstaller", false);
-                    Form1Backend.mainBackend.SetPerms(Path.GetDirectoryName(a[i].path), @"NT SERVICE\TrustedInstaller", false);
-                    Thread.Sleep(500);
+                    UIBackend.mainBackend.SetPerms(a[i].path, @"NT SERVICE\TrustedInstaller", false);
+                    UIBackend.mainBackend.SetPerms(Path.GetDirectoryName(a[i].path), @"NT SERVICE\TrustedInstaller", false);
+                    Thread.Sleep(200);
                 }
             }
             for (int i = 0; i < ExtrasList.Count; i++)
             {
                 if (FileListSelected.Contains(ExtrasList[i].Name))
                 {
-                    Form1Backend.ChangeDialogText("Installing Extras...", "Please wait while the installer is uninstalling extras.",
+                    UIBackend.ChangeDialogText("Uninstalling Extras...", "Please wait while the installer is uninstalling extras.",
                     "Uninstalling Extras: " + ExtrasList[i].Name, ExtrasList[i].ExtraIcon);
                     try { ExtrasList[i].UninstallExtra(); } catch { }
                     Thread.Sleep(4000);
                 }
             }
-            Form1Backend.ChangeDialogText("Cleaning up", "Finishing uninstallation, please wait...", "", Properties.Resources.done);
-            Form1Backend.CloseProgressDialog(frm);
+            UIBackend.ChangeDialogText("Cleaning up", "Finishing uninstallation, please wait...", "", Properties.Resources.done);
+            RemoveFromControlPanel();
+            PerformCleanup();
+            UIBackend.CloseProgressDialog(frm);
+        }
+        private static void PerformCleanup()
+        {
+            DirectoryInfo directory = new DirectoryInfo(Path.Combine(Variables.UserDir, "appdata", "local", "microsoft", "windows", "explorer"));
+            var a = directory.GetFiles("*.db", SearchOption.AllDirectories);
+            for (int i = 0; i < a.Length; i++)
+            {
+                UIBackend.mainBackend.SetPerms(a[i].FullName, "administrators", true);
+                UIBackend.mainBackend.SetPerms(a[i].DirectoryName, "administrators", true);
+                try { NativeMethods.MoveFileEx(a[i].FullName, Path.Combine(Variables.trash, a[i].Name), NativeMethods.MoveFileFlags.MOVEFILE_REPLACE_EXISTING); }
+                catch { }
+            }
+            UIBackend.mainBackend.KillExtrasIfRunning();
+        }
+        private static void RemoveFromControlPanel()
+        {
+            var key = Registry.LocalMachine.OpenSubKey(@"SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall", true);
+            key.DeleteSubKey("Rectify11", false);
         }
     }
 }

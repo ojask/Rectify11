@@ -4,6 +4,8 @@ using System.Linq;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using Rectify11.Backend;
+using System.Reflection;
+using System.IO;
 namespace Rectify11
 {
     static class Program
@@ -12,11 +14,11 @@ namespace Rectify11
         /// The main entry point for the application.
         /// </summary>
         [STAThread]
-        static void Main(string[] args)
+        static void Main()
         {
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
-            if(args.Length>0 && args[0].ToLower()=="/uninstall") Application.Run(new Form2());
+            if(Path.GetFileNameWithoutExtension(Assembly.GetExecutingAssembly().Location).ToLower()=="uninst000") Application.Run(new Form2());
             else Application.Run(new Form1());
         }
     }
