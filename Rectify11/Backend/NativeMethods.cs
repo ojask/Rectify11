@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Linq.Expressions;
@@ -26,6 +27,33 @@ namespace Rectify11.Backend
         [DllImport("kernel32.dll", SetLastError = true, CharSet = CharSet.Auto)]
         [return: MarshalAs(UnmanagedType.Bool)]
         public static extern bool MoveFileEx(string lpExistingFileName, string lpNewFileName, MoveFileFlags dwFlags);
-    }
-}
 
+		[DllImport("kernel32.dll", SetLastError = true)]
+		private static extern bool IsWow64Process2(
+			IntPtr process,
+			out ushort processMachine,
+			out ushort nativeMachine
+		);
+		public static bool IsArm64()
+		{
+			var handle = Process.GetCurrentProcess().Handle;
+			try
+			{
+				IsWow64Process2(handle, out var processMachine, out var nativeMachine);
+				if (nativeMachine == 0xaa64)
+				{
+					return true;
+				}
+				else
+				{
+					return false;
+				}
+			}
+			catch
+			{
+
+				return false;
+			}
+		}
+	}
+}

@@ -84,6 +84,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Backend\ExtrasBackend.cs" />
+    <Compile Include="Backend\ThemesBackend.cs" />
     <Compile Include="Backend\UIBackend.cs" />
     <Compile Include="Backend\FileListBackend.cs" />
     <Compile Include="Backend\InstallSequence.cs" />
@@ -133,6 +134,7 @@
       <DependentUpon>Settings.settings</DependentUpon>
       <DesignTimeSharedInput>True</DesignTimeSharedInput>
     </Compile>
+    <None Include="Resources\Themes.7z" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />
@@ -170,6 +172,7 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="r11.ico" />
+    <None Include="Resources\themepage.png" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

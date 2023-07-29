@@ -121,23 +121,14 @@
   <data name="incomplete" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\incomplete.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
+  <data name="_7za" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\7za.exe;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
   <data name="eula" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\eula.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
   <data name="ResourceHacker" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\ResourceHacker.exe;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="Files" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\Files.7z;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="_7za" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\7za.exe;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="installconf" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\installconf.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
-  <data name="AdvancedRun" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\AdvancedRun.exe;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
   <data name="progress" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\progress.gif;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
@@ -145,10 +136,25 @@
   <data name="done" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\done.ico;System.Drawing.Icon, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
-  <data name="InstallingIcons" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\InstallingIcons.ico;System.Drawing.Icon, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  <data name="Files" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\Files.7z;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
   <data name="Extras" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\Extras.7z;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="InstallingIcons" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\InstallingIcons.ico;System.Drawing.Icon, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="installconf" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\installconf.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="AdvancedRun" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\AdvancedRun.exe;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="themepage" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\themepage.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="Themes" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\Themes.7z;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
 </root>

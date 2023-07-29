@@ -23,11 +23,11 @@ namespace Rectify11.Backend
                     var parser = new FileIniDataParser();
                     IniData data = parser.ReadFile(Path.Combine(a[i].FullName, "config.ini"));
 
-                    extra.Name = data["ConfigFile"]["FriendlyName"];
-                    extra.ExtraIcon = Icon.ExtractAssociatedIcon(Path.Combine(a[i].FullName, data["ConfigFile"]["Icon"]));
-                    extra.installType = data["ConfigFile"]["InstallType"];
-                    extra.dirName = a[i].FullName;
-                    extra.dirNameHalf = a[i].Name;
+                    try { extra.Name = data["ConfigFile"]["FriendlyName"]; } catch { }
+                    try { extra.ExtraIcon = Icon.ExtractAssociatedIcon(Path.Combine(a[i].FullName, data["ConfigFile"]["Icon"])); } catch { }
+                    try { extra.installType = data["ConfigFile"]["InstallType"]; } catch { }
+                    try { extra.dirName = a[i].FullName; } catch { }
+                    try { extra.dirNameHalf = a[i].Name; } catch { }
                     try { extra.ExeName = data["ConfigFile"]["exeName"]; } catch { }
                     try { extra.args = data["ConfigFile"]["args"]; } catch { }
                     try { extra.fileForSched = Path.Combine(a[i].FullName, data["ConfigFile"]["fileForSched"]); } catch { }
@@ -37,7 +37,7 @@ namespace Rectify11.Backend
                     try { extra.UninstExe = data["ConfigFile"]["UninstExe"]; } catch { }
                     try
                     {
-                        for (int j = 0; j < Int32.Parse(extra.copyNumber); j++)
+                        for (int j = 0; j < int.Parse(extra.copyNumber); j++)
                         {
                             extra.copyLst.Add(data["ConfigFile"]["file" + i.ToString()]);
                         }

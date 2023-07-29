@@ -14,7 +14,7 @@ namespace Rectify11.Backend
 {
     class InstallSequence
     {
-        public static void StartPatching(Form frm, List<string> FileListSelected, List<FileItem> FileListFull, List<Extra> ExtrasList)
+        public static void StartPatching(Form frm, List<string> FileListSelected, List<FileItem> FileListFull, List<Extra> ExtrasList, bool theme)
         {
             UIBackend.ShowProgressDialog("Preparing Files...", "Installer is about to begin patching...", "", frm, frm.Icon);
             Thread.Sleep(2000);
@@ -68,6 +68,7 @@ namespace Rectify11.Backend
                     UIBackend.mainBackend.SetPerms(Path.GetDirectoryName(a[i].path), @"NT SERVICE\TrustedInstaller", false);
                 }
             }
+            if(theme) ThemesBackend.Install(Variables.r11themeDir);
             for (int i = 0; i < ExtrasList.Count; i++)
             {
                 if (FileListSelected.Contains(ExtrasList[i].Name))
@@ -86,6 +87,7 @@ namespace Rectify11.Backend
         private static void PerformCleanup()
         {
             DirectoryInfo directory = new DirectoryInfo(Path.Combine(Variables.UserDir, "appdata", "local", "microsoft", "windows", "explorer"));
+
             var a = directory.GetFiles("*.db", SearchOption.AllDirectories);
             for (int i = 0; i < a.Length; i++)
             {
@@ -125,7 +127,7 @@ namespace Rectify11.Backend
 
             File.Copy(Assembly.GetExecutingAssembly().Location, Path.Combine(Variables.r11Fldr,"uninst000.exe"), true);
             var refs = new DirectoryInfo(Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location)).GetFiles("*.dll", SearchOption.TopDirectoryOnly);
-            for(int i=0; i<refs.Length; i++)
+            for(int i=0; i<refs.Length; i++) //temporary, wont be needed when single file installer is implemented.
             {
                 File.Copy(refs[i].FullName, Path.Combine(Variables.r11Fldr, refs[i].Name));
             }

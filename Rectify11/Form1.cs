@@ -41,7 +41,7 @@ namespace Rectify11
 
                 InstallSequence.StartPatching(this, FileListBackend.FileListSelected(treeView1), 
                     FileListBackend.FileListFull(Variables.r11Files, Variables.sysDrive),
-                    ExtrasBackend.ExtrasList(Variables.Extras));
+                    ExtrasBackend.ExtrasList(Variables.Extras), treeView1.Nodes[2].Checked);
 
                 System.Windows.Forms.Timer timer = new System.Windows.Forms.Timer();
                 timer.Interval = 1000;
@@ -54,9 +54,10 @@ namespace Rectify11
         private void Timer_Tick(object sender, EventArgs e)
         {
             label2.Text = "Restarting in " + i.ToString() + " seconds";
-            if (i == 0) Interaction.Shell(Path.Combine(Variables.sys32, "shutdown.exe") + " /r /f /t 0", AppWinStyle.Hide, true);
+            if (i == 0) UIBackend.mainBackend.EndProcedure();
             else i--;
         }
+        private List<theme> thm { get; set; }
         private void Form1_Shown(object sender, EventArgs e)
         {
             UIBackend.ShowProgressDialog("Please wait", "Extracting Files...", "Installer is extracting files for installation.", this, Icon);
@@ -67,6 +68,8 @@ namespace Rectify11
             Thread.Sleep(2000);
             UIBackend.ChangeDialogText("Please wait", "Preparing Files...", "Installer is reading the system files for preparation.", Icon);
             UIBackend.PrepareTree(treeView1, FileListBackend.FileListFull(Variables.r11Files, Variables.sysDrive), ExtrasBackend.ExtrasList(Variables.Extras));
+            thm = ThemesBackend.themesList(Variables.r11themeDir);
+            UIBackend.PrepareThemePage(comboBox1, pictureBox3, thm);
 
             Thread.Sleep(2000);
             UIBackend.CloseProgressDialog(this);
@@ -85,7 +88,12 @@ namespace Rectify11
         }
         private void button1_Click(object sender, EventArgs e)
         {
-            Interaction.Shell(Path.Combine(Variables.sys32, "shutdown.exe") + " /r /f /t 0", AppWinStyle.Hide, true);
+            UIBackend.mainBackend.EndProcedure();
+        }
+
+        private void comboBox1_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            pictureBox3.Image = ThemesBackend.themesList(Variables.r11themeDir)[comboBox1.SelectedIndex].preview;
         }
     }
 }

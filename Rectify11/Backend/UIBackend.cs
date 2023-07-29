@@ -38,7 +38,7 @@ namespace Rectify11.Backend
         }
         public static void PrepareTree(TreeView treeView1, List<FileItem> files, List<Extra> Extras)
         {
-            TreeStructure.PrepareTreeNodes(treeView1);
+            TreeStructure.PrepareRootTreeNodes(treeView1);
 
             var a = files;
             for (int i=0; i<a.Count; i++)
@@ -48,7 +48,7 @@ namespace Rectify11.Backend
                     TreeNode n = treeView1.Nodes[0].Nodes[0].Nodes.Add(a[i].Name);
                     n.Name = a[i].path;
                 }
-                else 
+                else
                 { 
                     TreeNode n = treeView1.Nodes[0].Nodes[1].Nodes.Add(a[i].Name);
                     n.Name = a[i].path;
@@ -61,6 +61,16 @@ namespace Rectify11.Backend
                 TreeNode n = treeView1.Nodes[1].Nodes.Add(b[i].Name);
                 n.Name = b[i].Name;
             }
+        }
+        public static void PrepareThemePage(ComboBox comboBox, PictureBox pictureBox, List<theme> lst) 
+        {
+            var a = lst;
+            for(int i=0; i<a.Count; i++)
+            {
+                comboBox.Items.Add(a[i].Name);
+            }
+            comboBox.SelectedIndex = 0;
+            pictureBox.Image = a[0].preview;
         }
         public static void ShowProgressDialog(string title, string instruction, string text, Form frm1, Icon icon)
         {

@@ -169,5 +169,25 @@ namespace Rectify11.Properties {
                 return ((byte[])(obj));
             }
         }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap themepage {
+            get {
+                object obj = ResourceManager.GetObject("themepage", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Byte[].
+        /// </summary>
+        internal static byte[] Themes {
+            get {
+                object obj = ResourceManager.GetObject("Themes", resourceCulture);
+                return ((byte[])(obj));
+            }
+        }
     }
 }

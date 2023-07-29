@@ -54,6 +54,7 @@ namespace Rectify11.Backend
                     Thread.Sleep(200);
                 }
             }
+            ThemesBackend.Uninstall();
             for (int i = 0; i < ExtrasList.Count; i++)
             {
                 if (FileListSelected.Contains(ExtrasList[i].Name))

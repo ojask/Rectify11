@@ -45,6 +45,12 @@ namespace Rectify11
             this.selPage = new AeroWizard.WizardPage();
             this.treeView1 = new System.Windows.Forms.TreeView();
             this.selImg = new System.Windows.Forms.PictureBox();
+            this.themePage = new AeroWizard.WizardPage();
+            this.pictureBox4 = new System.Windows.Forms.PictureBox();
+            this.pictureBox3 = new System.Windows.Forms.PictureBox();
+            this.label4 = new System.Windows.Forms.Label();
+            this.label3 = new System.Windows.Forms.Label();
+            this.comboBox1 = new System.Windows.Forms.ComboBox();
             this.FinishPage = new AeroWizard.WizardPage();
             this.button1 = new System.Windows.Forms.Button();
             this.pictureBox2 = new System.Windows.Forms.PictureBox();
@@ -56,6 +62,9 @@ namespace Rectify11
             ((System.ComponentModel.ISupportInitialize)(this.eulaImg)).BeginInit();
             this.selPage.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.selImg)).BeginInit();
+            this.themePage.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.pictureBox4)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.pictureBox3)).BeginInit();
             this.FinishPage.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox2)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).BeginInit();
@@ -67,6 +76,7 @@ namespace Rectify11
             this.wizardControl1.Name = "wizardControl1";
             this.wizardControl1.Pages.Add(this.licPage);
             this.wizardControl1.Pages.Add(this.selPage);
+            this.wizardControl1.Pages.Add(this.themePage);
             this.wizardControl1.Pages.Add(this.FinishPage);
             this.wizardControl1.Size = new System.Drawing.Size(616, 437);
             this.wizardControl1.TabIndex = 0;
@@ -152,7 +162,7 @@ namespace Rectify11
             treeNode4.Name = "Node1";
             treeNode4.Text = "Extras";
             treeNode5.Checked = true;
-            treeNode5.Name = "Node2";
+            treeNode5.Name = "Themes";
             treeNode5.Text = "Themes";
             this.treeView1.Nodes.AddRange(new System.Windows.Forms.TreeNode[] {
             treeNode3,
@@ -170,6 +180,69 @@ namespace Rectify11
             this.selImg.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage;
             this.selImg.TabIndex = 2;
             this.selImg.TabStop = false;
+            // 
+            // themePage
+            // 
+            this.themePage.Controls.Add(this.pictureBox4);
+            this.themePage.Controls.Add(this.pictureBox3);
+            this.themePage.Controls.Add(this.label4);
+            this.themePage.Controls.Add(this.label3);
+            this.themePage.Controls.Add(this.comboBox1);
+            this.themePage.Name = "themePage";
+            this.themePage.Size = new System.Drawing.Size(569, 283);
+            this.themePage.TabIndex = 4;
+            this.themePage.Text = "Select theme";
+            // 
+            // pictureBox4
+            // 
+            this.pictureBox4.Image = global::Rectify11.Properties.Resources.themepage;
+            this.pictureBox4.Location = new System.Drawing.Point(21, 52);
+            this.pictureBox4.Name = "pictureBox4";
+            this.pictureBox4.Size = new System.Drawing.Size(147, 147);
+            this.pictureBox4.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage;
+            this.pictureBox4.TabIndex = 1;
+            this.pictureBox4.TabStop = false;
+            // 
+            // pictureBox3
+            // 
+            this.pictureBox3.Location = new System.Drawing.Point(351, 23);
+            this.pictureBox3.Name = "pictureBox3";
+            this.pictureBox3.Size = new System.Drawing.Size(181, 106);
+            this.pictureBox3.SizeMode = System.Windows.Forms.PictureBoxSizeMode.CenterImage;
+            this.pictureBox3.TabIndex = 1;
+            this.pictureBox3.TabStop = false;
+            // 
+            // label4
+            // 
+            this.label4.Anchor = System.Windows.Forms.AnchorStyles.Right;
+            this.label4.AutoSize = true;
+            this.label4.Location = new System.Drawing.Point(294, 26);
+            this.label4.Name = "label4";
+            this.label4.RightToLeft = System.Windows.Forms.RightToLeft.No;
+            this.label4.Size = new System.Drawing.Size(51, 15);
+            this.label4.TabIndex = 2;
+            this.label4.Text = "Preview:";
+            // 
+            // label3
+            // 
+            this.label3.Anchor = System.Windows.Forms.AnchorStyles.Right;
+            this.label3.AutoSize = true;
+            this.label3.Location = new System.Drawing.Point(294, 179);
+            this.label3.Name = "label3";
+            this.label3.RightToLeft = System.Windows.Forms.RightToLeft.No;
+            this.label3.Size = new System.Drawing.Size(47, 15);
+            this.label3.TabIndex = 1;
+            this.label3.Text = "Theme:";
+            // 
+            // comboBox1
+            // 
+            this.comboBox1.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.comboBox1.FormattingEnabled = true;
+            this.comboBox1.Location = new System.Drawing.Point(351, 176);
+            this.comboBox1.Name = "comboBox1";
+            this.comboBox1.Size = new System.Drawing.Size(181, 23);
+            this.comboBox1.TabIndex = 1;
+            this.comboBox1.SelectedIndexChanged += new System.EventHandler(this.comboBox1_SelectedIndexChanged);
             // 
             // FinishPage
             // 
@@ -260,6 +333,10 @@ namespace Rectify11
             ((System.ComponentModel.ISupportInitialize)(this.eulaImg)).EndInit();
             this.selPage.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.selImg)).EndInit();
+            this.themePage.ResumeLayout(false);
+            this.themePage.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.pictureBox4)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.pictureBox3)).EndInit();
             this.FinishPage.ResumeLayout(false);
             this.FinishPage.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox2)).EndInit();
@@ -284,6 +361,12 @@ namespace Rectify11
         private System.Windows.Forms.PictureBox pictureBox2;
         private System.Windows.Forms.Label label2;
         private System.Windows.Forms.Button button1;
+        private AeroWizard.WizardPage themePage;
+        private System.Windows.Forms.PictureBox pictureBox3;
+        private System.Windows.Forms.Label label4;
+        private System.Windows.Forms.Label label3;
+        private System.Windows.Forms.ComboBox comboBox1;
+        private System.Windows.Forms.PictureBox pictureBox4;
     }
 }
 

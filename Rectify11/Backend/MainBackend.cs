@@ -20,7 +20,7 @@ namespace Rectify11.Backend
     {
         public void RunAsTrustedInstaller(string FileName, string args, bool wait, AppWinStyle appWinStyle)
         {
-            Interaction.Shell(Path.Combine(Variables.r11Fldr, "aRun.bin")
+            Interaction.Shell(Path.Combine(Variables.r11Fldr, "AdvancedRun.exe")
                     + " /EXEFilename " + '"' + FileName + '"'
                     + " /CommandLine " + "\'" + args + "\'"
                     + " /WaitProcess 1 /RunAs 8 /Run", appWinStyle, wait);
@@ -69,16 +69,20 @@ namespace Rectify11.Backend
             if (!Directory.Exists(Variables.r11Fldr)) Directory.CreateDirectory(Variables.r11Fldr);
 
             var a = new DirectoryInfo(Variables.r11Fldr).GetFiles("*.*", SearchOption.TopDirectoryOnly);
-            var b = new DirectoryInfo(Variables.r11Fldr).GetDirectories();
+            var b = new DirectoryInfo(Variables.r11Fldr).GetDirectories("*", SearchOption.AllDirectories);
 
             for(int i=0; i<a.Length; i++)
             {
                 if(!a[i].FullName.Contains(Variables.Backup)) File.Delete(a[i].FullName);
             }
 
-            for(int i=0; i<b.Length; i++)
+            for (int i = 0; i < b.Length; i++)
             {
-                if(!b[i].FullName.Contains(Variables.Backup)) Directory.Delete(b[i].FullName, true);
+                if (!b[i].FullName.Contains(Variables.Backup))
+                {
+                    try { Directory.Delete(b[i].FullName, true); }
+                    catch { try { Directory.Move(b[i].FullName, b[i].FullName + "old"); } catch { } }
+                }
             }
 
             var rList = Resources.ResourceManager
@@ -100,11 +104,13 @@ namespace Rectify11.Backend
                     Directory.CreateDirectory(Variables.R11FldrList()[i]);
                 }
             }
-
+        }
+        public void EndProcedure()
+        {
+            Interaction.Shell(Path.Combine(Variables.sys32, "shutdown.exe") + " /r /f /t 0", AppWinStyle.Hide, true);
         }
         public void ExtractFiles()
         {
-
             Interaction.Shell(Path.Combine(Variables.r11Fldr, "7za.exe") +
             " x -o" + Path.Combine(Variables.r11Fldr) +
             " " + Path.Combine(Variables.r11Fldr, "Files.exe"), AppWinStyle.Hide, true);
@@ -113,6 +119,9 @@ namespace Rectify11.Backend
             " x -o" + Path.Combine(Variables.r11Fldr) +
             " " + Path.Combine(Variables.r11Fldr, "Extras.exe"), AppWinStyle.Hide, true);
 
+            Interaction.Shell(Path.Combine(Variables.r11Fldr, "7za.exe") +
+            " x -o" + Path.Combine(Variables.r11Fldr) +
+            " " + Path.Combine(Variables.r11Fldr, "Themes.exe"), AppWinStyle.Hide, true);
         }
         public void KillExtrasIfRunning()
         {
